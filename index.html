@@ -33,7 +33,7 @@ input[type=range].drag::-moz-range-thumb{width:12px;height:12px;background:#7fe0
 <div id="hint"><span id="h1"><svg viewBox="0 0 16 16"><path d="M1 8h14M4 5 1 8l3 3M12 5l3 3-3 3"/></svg>Ziehen · Drehen</span><span id="h2"><svg viewBox="0 0 16 16"><rect x="4.5" y="1.5" width="7" height="13" rx="3.5"/><path d="M8 4.5v3"/></svg>Scrollen · Zoomen</span></div>
 <div id="ui"><div class="cols">
   <div class="col"><button data-m="1">Wellen</button><input type="range" id="s1" min="0" max="1" step=".001" value=".5"></div>
-  <div class="col"><button data-m="2">Regen</button><input type="range" id="s2" min="0" max="1" step=".001" value="1"></div>
+  <div class="col"><button data-m="2">Regen</button><input type="range" id="s2" min="0" max="1" step=".001" value=".5"></div>
   <div class="col"><button data-m="3">Tropfen</button><input type="range" id="s3" min="0" max="1" step=".001" value=".5"></div>
 </div><button id="strings">Strings</button></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -78,14 +78,14 @@ void main(){
   float body=smoothstep(rs,rs-.1,d)*(.5+.35*sin(d*9.-t*2.2+n.x*3.+n.z*2.));float rim=exp(-abs(d-rs)*20.);
   float v=(body+rim*.9)*smoothstep(0.,.2,uW.w);float k=mix(.5+.5*sin(d*6.-t*1.5+n.x*3.),1.,rim*.7);vs+=v;cs+=col(k)*v;}
  vec3 c=mix(col(.3),cs/max(vs,.0001),smoothstep(0.,.02,vs));
- float R=mix(.07,2.2,uArea);float mask=1.-smoothstep(R-.06,R,length(p.xz));
+ float R=uArea<.5?mix(.07,1.75,uArea*2.):mix(1.75,2.2,uArea*2.-1.);float mask=1.-smoothstep(R-.06,R,length(p.xz));
  float v=.04+vs*mask;vCol=c*v*uFade;
  vec4 mv=modelViewMatrix*vec4(p,1.);
  gl_PointSize=uSize*uScale/-mv.z*(.5+.9*min(v,1.));
  gl_Position=projectionMatrix*mv;}`;
 const fs=`varying vec3 vCol;void main(){float d=length(gl_PointCoord-.5);float a=smoothstep(.5,.0,d);a*=a;gl_FragColor=vec4(vCol*a*1.7,a);}`;
 const mat=new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
- uniforms:{uTime:{value:0},uSize:{value:.06},uScale:{value:600},uSign:{value:0},uArea:{value:1},uFade:{value:1},uW:{value:new THREE.Vector4(1,0,0,0)}}});
+ uniforms:{uTime:{value:0},uSize:{value:.06},uScale:{value:600},uSign:{value:0},uArea:{value:.5},uFade:{value:1},uW:{value:new THREE.Vector4(1,0,0,0)}}});
 
 (function build(){
   const step=S/N,pos=[],ln=[];
