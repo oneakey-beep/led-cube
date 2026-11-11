@@ -39,9 +39,9 @@ const renderer=new THREE.WebGLRenderer({antialias:true,stencil:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x05060a);
-const cam=new THREE.PerspectiveCamera(45,1,.1,100);cam.position.set(4.6,2.4,5.4);
+const cam=new THREE.PerspectiveCamera(45,1,.1,100);cam.position.set(0,1.5,Math.max(3.62,3.62/(innerWidth/innerHeight))*1.5);
 const ctl=new THREE.OrbitControls(cam,renderer.domElement);
-ctl.target.set(0,1.4,0);ctl.enableDamping=true;ctl.autoRotate=false;ctl.maxPolarAngle=1.5;
+ctl.target.set(0,1.5,0);ctl.enableDamping=true;ctl.autoRotate=false;ctl.maxPolarAngle=1.5;
 
 const box=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(S,S,S)),new THREE.LineBasicMaterial({color:0x4a5468}));
 box.position.y=S/2;scene.add(box);
