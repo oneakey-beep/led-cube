@@ -126,7 +126,7 @@ addEventListener('resize',resize);resize();
 let prev=performance.now();
 (function loop(now){requestAnimationFrame(loop);
   const dt=Math.min((now-prev)/1000,.1);prev=now;
-  if(mode!==0&&now-last>10000){mode=0;btns.forEach(x=>x.classList.remove('on'));}
+  if(mode!==0&&now-last>20000){mode=0;btns.forEach(x=>x.classList.remove('on'));}
   const k=1-Math.exp(-dt*1.2);
   for(let i=0;i<4;i++)W[i]+=((i===mode?1:0)-W[i])*k;
   mat.uniforms.uW.value.set(W[0],W[1],W[2],W[3]);
