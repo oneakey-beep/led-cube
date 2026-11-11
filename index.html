@@ -17,17 +17,17 @@ button.on{border-color:var(--ac);color:var(--ac);background:rgba(127,224,160,.08
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;margin:0;outline:none}
 input[type=range]::-webkit-slider-runnable-track{height:1px;background:rgba(255,255,255,.3)}
 input[type=range]::-moz-range-track{height:1px;background:rgba(255,255,255,.3)}
-input[type=range].hue::-webkit-slider-runnable-track{background:linear-gradient(90deg,#e03030,#2fbf60 50%,#3070f0)}
-input[type=range].hue::-moz-range-track{background:linear-gradient(90deg,#e03030,#2fbf60 50%,#3070f0)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:6px;height:6px;margin-top:-2.5px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 6px rgba(255,255,255,.9)}
 input[type=range]::-moz-range-thumb{width:6px;height:6px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 6px rgba(255,255,255,.9)}
+input[type=range].drag::-webkit-slider-thumb{width:12px;height:12px;margin-top:-5.5px;background:#7fe0a0;box-shadow:0 0 10px rgba(127,224,160,.9)}
+input[type=range].drag::-moz-range-thumb{width:12px;height:12px;background:#7fe0a0;box-shadow:0 0 10px rgba(127,224,160,.9)}
 #info{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:12px;color:var(--mut);font-size:12px;pointer-events:none}
 </style>
 </head>
 <body>
 <div id="info"></div>
 <div id="ui"><div class="cols">
-  <div class="col"><button data-m="1">Wellen</button><input type="range" class="hue" id="s1" min="0" max="1" step=".001" value=".5"></div>
+  <div class="col"><button data-m="1">Wellen</button><input type="range" id="s1" min="0" max="1" step=".001" value=".5"></div>
   <div class="col"><button data-m="2">Regen</button><input type="range" id="s2" min="0" max="1" step=".001" value="1"></div>
   <div class="col"><button data-m="3">Tropfen</button><input type="range" id="s3" min="0" max="1" step=".001" value=".5"></div>
 </div><button id="strings">Strings</button></div>
@@ -109,6 +109,8 @@ $('strings').onclick=e=>{lines.visible=!lines.visible;e.target.classList.toggle(
 $('s1').oninput=e=>{let s=(+e.target.value-.5)*2;if(Math.abs(s)<.06)s=0;mat.uniforms.uSign.value=s;touch();};
 $('s2').oninput=e=>{mat.uniforms.uArea.value=+e.target.value;touch();};
 $('s3').oninput=e=>{speed=Math.pow(4,(+e.target.value-.5)*2);touch();};
+document.querySelectorAll('input[type=range]').forEach(i=>i.addEventListener('pointerdown',()=>i.classList.add('drag')));
+['pointerup','pointercancel'].forEach(ev=>addEventListener(ev,()=>document.querySelectorAll('.drag').forEach(i=>i.classList.remove('drag'))));
 
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();
   mat.uniforms.uScale.value=h*renderer.getPixelRatio()/(2*Math.tan(cam.fov*Math.PI/360));}
