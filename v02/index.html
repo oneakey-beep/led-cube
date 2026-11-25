@@ -115,8 +115,8 @@ void main(){
  vec4 mv=modelViewMatrix*vec4(P0,1.);
  gl_PointSize=max(uSize*uScale/-mv.z,3.);
  gl_Position=projectionMatrix*mv;}`;
-const fs=`varying vec3 vCol;void main(){vec2 q=abs(gl_PointCoord-.5)-vec2(.5,.5)+.12;float sd=length(max(q,0.))+min(max(q.x,q.y),0.)-.12;float a=1.-smoothstep(-.06,.06,sd);if(a<.01)discard;gl_FragColor=vec4(vCol*1.1,a);}`;
-const mat=new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,depthWrite:false,blending:THREE.CustomBlending,blendSrc:THREE.SrcAlphaFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.ZeroFactor,blendDstAlpha:THREE.OneFactor,
+const fs=`varying vec3 vCol;void main(){vec2 q=abs(gl_PointCoord-.5)-vec2(.5,.5)+.12;float sd=length(max(q,0.))+min(max(q.x,q.y),0.)-.12;float a=1.-smoothstep(-.06,.06,sd);if(a<.01)discard;vec3 c=vCol*1.1*a;gl_FragColor=vec4(c,min(1.,max(c.r,max(c.g,c.b))));}`;
+const mat=new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,depthWrite:false,blending:THREE.CustomBlending,blendSrc:THREE.OneFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.OneFactor,blendDstAlpha:THREE.OneFactor,
  uniforms:{uBase:{value:0},uTime:{value:0},uSize:{value:.02},uScale:{value:600},uSign:{value:0},uArea:{value:.5},uFade:{value:1},uRingR:{value:0},uRingA:{value:0},uH:{value:0},uHR:{value:.4},uW:{value:new THREE.Vector4(1,0,0,0)}}});
 
 (function build(){
@@ -134,7 +134,7 @@ const mat=new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparen
     [-1,-BW,-1,0,1,0,2],[-1,-BW,-1,2*BH,1,0,2],[-1,BW,-1,0,1,0,2],[-1,BW,-1,2*BH,1,0,2],
     [1,0,1,-2*BH,1,0,2],[1,0,1,2*BH,1,0,2],[1,-2*BW,1,0,1,0,2],[1,2*BW,1,0,1,0,2]];const FADE=[1,.5,.28];
   IM.forEach(([sx_,ox,sy,oy,sz_,oz,b])=>{
-    const m=b?new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,depthWrite:false,depthTest:false,blending:THREE.CustomBlending,blendSrc:THREE.SrcAlphaFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.ZeroFactor,blendDstAlpha:THREE.OneFactor,stencilWrite:true,stencilRef:1,stencilFunc:THREE.EqualStencilFunc,stencilFail:THREE.KeepStencilOp,stencilZFail:THREE.KeepStencilOp,stencilZPass:THREE.KeepStencilOp,uniforms:Object.assign({},mat.uniforms,{uFade:{value:FADE[b]}})}):mat;
+    const m=b?new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,depthWrite:false,depthTest:false,blending:THREE.CustomBlending,blendSrc:THREE.OneFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.OneFactor,blendDstAlpha:THREE.OneFactor,stencilWrite:true,stencilRef:1,stencilFunc:THREE.EqualStencilFunc,stencilFail:THREE.KeepStencilOp,stencilZFail:THREE.KeepStencilOp,stencilZPass:THREE.KeepStencilOp,uniforms:Object.assign({},mat.uniforms,{uFade:{value:FADE[b]}})}):mat;
     const pts=new THREE.Points(g,m);pts.frustumCulled=false;pts.renderOrder=b?2:0;pts.scale.set(sx_,sy,sz_);pts.position.set(ox,oy,oz);scene.add(pts);});
   const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(ln,3));
   lines=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x2a3040,transparent:true,opacity:.5}));lines.visible=false;scene.add(lines);
