@@ -37,10 +37,10 @@ button.on{border-color:var(--ac);color:var(--ac);background:rgba(127,224,160,.08
 #info{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:12px;color:var(--mut);font-size:12px;pointer-events:none}
 </style>
 </head>
-<body class="img"><div id="env"><b></b><i id="envi"></i></div>
+<body><div id="env"><b></b><i id="envi"></i></div>
 <div id="info"></div>
 <div id="hint"><span id="h1"><svg viewBox="0 0 16 16"><path d="M1 8h14M4 5 1 8l3 3M12 5l3 3-3 3"/></svg>Ziehen · Drehen</span><span id="h2"><svg viewBox="0 0 16 16"><rect x="4.5" y="1.5" width="7" height="13" rx="3.5"/><path d="M8 4.5v3"/></svg>Scrollen · Zoomen</span></div>
-<div id="ui"><div class="cols" id="cols"></div><div id="bt"><button id="strings">Strings</button><button id="mirror" class="on">Spiegelung</button><button id="envb" class="on">Rendering</button></div></div>
+<div id="ui"><div class="cols" id="cols"></div><div id="bt"><button id="strings">Strings</button><button id="mirror" class="on">Spiegelung</button><button id="envb">Rendering</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
@@ -191,7 +191,7 @@ apply();
 const hint=$('hint'),coarse=matchMedia('(pointer:coarse)').matches;
 $('h1').lastChild.textContent=coarse?'Wischen · Drehen':'Ziehen · Drehen';
 $('h2').lastChild.textContent=coarse?'Zwei Finger · Zoomen':'Scrollen · Zoomen';
-const IMG={w:1900,h:1270,x0:0.20633,x1:0.80509,y0:0.17139,y1:0.88770},DZ=5;let imgOn=true;
+const IMG={w:1900,h:1270,x0:0.20633,x1:0.80509,y0:0.17139,y1:0.88770},DZ=5;let imgOn=false;
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();
   if(imgOn){
     const ow=(IMG.x1-IMG.x0)*IMG.w,oh=(IMG.y1-IMG.y0)*IMG.h,ucy=h<560?.42:.40;
@@ -208,7 +208,7 @@ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cam.asp
 function setImg(on){imgOn=on;document.body.classList.toggle('img',on);grid.visible=!on;box.visible=!on;ctl.enabled=!on;updBlk();mat.uniforms.uBase.value=on?0:.012;pm.colorWrite=!on;
   if(on){cam.position.set(0,BH/2,BD/2+DZ);ctl.target.set(0,BH/2,0);cam.up.set(0,1,0);}
   resize();}
-addEventListener('resize',resize);$('envb').onclick=e=>{const on=!imgOn;e.target.classList.toggle('on',on);setImg(on);touch();};setImg(true);
+addEventListener('resize',resize);$('envb').onclick=e=>{const on=!imgOn;e.target.classList.toggle('on',on);setImg(on);touch();};setImg(false);
 let prev=performance.now();
 (function loop(now){requestAnimationFrame(loop);
   const dt=Math.min((now-prev)/1000,.1);prev=now;
