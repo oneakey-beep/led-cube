@@ -175,7 +175,7 @@ KN.forEach(k=>{
   else{const nv=Math.min(1,Math.max(0,k.v+d/Math.PI));
    if(nv!==k.v){k.v=nv;show();apply();touch();}}});
  const end=e=>{if(pa===null)return;pa=null;k.kn.classList.remove('drag');ind.setAttribute('r',3);
-  if(k.tap&&Math.hypot(e.clientX-sx,e.clientY-sy)<10&&performance.now()-st<700){const m=k===KN[1]?1:2;if(mode!==m){mode=m;refreshOn();ringT0=performance.now();}}touch();};
+  if(k.tap&&Math.hypot(e.clientX-sx,e.clientY-sy)<10&&performance.now()-st<700){const m=k===KN[1]?1:2;if(mode!==m){mode=m;refreshOn();ringT0=performance.now();}else{mode=0;refreshOn();}}touch();};
  k.kn.addEventListener('pointerup',end);k.kn.addEventListener('pointercancel',end);
 });
 apply();
