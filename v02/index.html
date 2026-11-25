@@ -212,7 +212,7 @@ addEventListener('resize',resize);$('envb').onclick=e=>{const on=!imgOn;e.target
 let prev=performance.now();
 (function loop(now){requestAnimationFrame(loop);
   const dt=Math.min((now-prev)/1000,.1);prev=now;
-  if(mode!==0&&now-last>30000){mode=0;refreshOn();ringT0=now;ringDir=-1;}
+  if(mode!==0&&now-last>30000){mode=0;refreshOn();}
   if(!idleOn&&now-last>30000)idleOn=true;
   G+=((idleOn?1:0)-G)*(1-Math.exp(-dt*.8));
   AA+=((mode===1?1:0)-AA)*(1-Math.exp(-dt*1.2));AH+=((mode===2?1:0)-AH)*(1-Math.exp(-dt*1.2));
