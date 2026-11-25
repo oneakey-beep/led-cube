@@ -73,18 +73,21 @@ void main(){
  float t=uTime;float id=h(p.xz*7.3);float vs=0.;vec3 cs=vec3(0.);
  {float lid=h(p.xz*7.3+p.y*17.3);float ph=h(p.zx*3.1+p.y*9.7);
   float v=pow(.5+.5*sin(t*(.6+ph*.5)+ph*60.),6.)*step(.949,lid)*uW.x;vs+=v;cs+=col(ph)*v;}
- {float lvl=${fH}*.57+.22*surf(p.xz,t*1.5)+.09*sin(p.x*1.2+p.z*.8-t*1.4)-(1.-uW.y)*${fH}*.8;float d=lvl-p.y;
-  float glow=exp(-abs(d)*14.);float flow=.28+.22*sin(p.y*4.-t*.5+surf(p.zx*1.3,t*1.2)*2.);
-  float body=smoothstep(-.03,.06,d)*flow*exp(-max(d,0.)*.4);
-  float v=max(glow*1.1,body)*(1.-smoothstep(${fH}*.8,${fH}*.82,p.y))*smoothstep(0.,.15,uW.y);vs+=v;cs+=col(exp(-max(d,0.)*3.))*v;}
- {float v=0.;for(int n=0;n<3;n++){float r=h(p.xz*7.3+float(n)*5.7);float sp=.175+.25*h(p.xz*3.9+float(n)*2.3);
+ {float d=1.-p.y/${fH};float R=.2+.7*d;float ph=13.*(d-.2*t);float v=0.;
+  for(int s=0;s<2;s++){float a=ph+float(s)*3.14159;float dd=length(vec2(p.x-R*cos(a),p.z-R*sin(a)*.55));v=max(v,smoothstep(.15,.05,dd));}
+  float bead=.6+.4*step(.35,fract(d*28.-t*2.5));float br=smoothstep(.5,1.,d);
+  float drop=step(.45*br,h(p.xz*11.+floor(t*8.+p.y*3.)*.37));
+  float spray=step(.94,h(p.xz*9.+p.y*13.+floor(t*7.)))*smoothstep(R+.45,R-.05,length(p.xz))*br*.8;
+  v=(v*bead*drop+spray)*uW.y;vs+=v;cs+=col(.5)*v;}
+ {float v=0.;float edge=${fH}*(1.-smoothstep(0.,.6,uW.z))-.35*p.x*p.x;float cm=1.-smoothstep(1.,1.2,abs(p.x));
+  for(int n=0;n<6;n++){float r=h(p.xz*7.3+float(n)*5.7);float sp=.3+.2*h(p.xz*3.9+float(n)*2.3);
    float hd=1.35-1.65*fract(t*sp+r);float d=p.y/${fH}-hd;
-   if(d>=0.)v+=exp(-d*11.)*(d<.02?1.5:1.)*step(.2,h(p.xz*4.3+float(n)*8.1));}
-  v*=uW.z;vs+=v;cs+=col(.4+.6*id)*v;}
- {vec3 q=p-vec3(0.,${fH}*.5,0.);float d=length(q);vec3 n=q/max(d,.001);
-  float rs=(.8+.1*sin(t*1.3)+.14*sin(n.x*3.+t*1.1)*sin(n.y*3.-t*.9)+.12*sin(n.z*4.+n.x*2.-t*1.4)+.1*sin(n.y*5.+n.z*2.+t*1.7))*uW.w;
-  float body=smoothstep(rs,rs-.1,d)*(.5+.35*sin(d*9.-t*2.2+n.x*3.+n.z*2.));float rim=exp(-abs(d-rs)*20.);
-  float v=(body+rim*.9)*smoothstep(0.,.2,uW.w);float k=mix(.5+.5*sin(d*6.-t*1.5+n.x*3.),1.,rim*.7);vs+=v;cs+=col(k)*v;}
+   if(d>=0.)v+=exp(-d*14.)*(d<.02?1.4:1.)*step(.25,h(p.xz*4.3+float(n)*8.1));}
+  v*=uW.z*cm*step(edge,p.y);vs+=v;cs+=col(.4)*v;}
+ {float y1=p.y/${fH};float xc=.14*sin(y1*5.-t*.9)+.05*sin(y1*13.+t*1.7);
+  float inS=smoothstep(.12,.05,abs(p.x-xc))*step(abs(p.z),.08);
+  float ff=fract(y1*9.+t*5.4+.35*sin(y1*3.));float bead=ff<.16?1.:exp(-(ff-.16)*12.)*.45;
+  float v=inS*bead*uW.w;vs+=v;cs+=col(.6)*v;}
  {float rr=length(vec2(p.x,p.y-${fH}*.5));
   float R=max(uHR,.1);
   float prof=1.-smoothstep(R-.05,R+.03,rr);
@@ -136,7 +139,7 @@ ctl.addEventListener('start',touch);ctl.addEventListener('end',touch);
 const $=id=>document.getElementById(id);
 $('strings').onclick=e=>{lines.visible=!lines.visible;e.target.classList.toggle('on',lines.visible);touch();};
 // Drehregler: Temperatur (±90°, Farbe) · Auswahl (360°, 3 Rasterpunkte = Animation) · Handbrause (±90°, Kreisgröße)
-const OPTS=['Wellen','Regen','Tropfen'];
+const OPTS=['Whirl','Sparkling Rain','Massage'];
 const KN=[{name:'Temperatur',type:'arc',v:.5,e:['#e04040','#4a80ff']},
           {name:'Auswahl',type:'ring',idx:0,ang:0,tap:true},
           {name:'Handbrause',type:'arc',v:.5,e:[],tap:true}];
