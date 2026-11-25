@@ -31,7 +31,8 @@ canvas:active{cursor:grabbing}
 .knob .dot.sel{fill:#7fe0a0}
 .sub{font-size:10px;font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-top:-2px;min-height:12px}
 button{background:rgba(255,255,255,.04);color:var(--fg);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:9px 0;font:inherit;font-size:12px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:border-color .3s,color .3s,background .3s}
-#strings{pointer-events:auto;display:block;margin:16px auto 0;padding:5px 16px;font-size:10px}
+#bt{display:flex;justify-content:center;gap:10px;margin-top:16px}
+#strings,#mirror{pointer-events:auto;padding:5px 16px;font-size:10px}
 button.on{border-color:var(--ac);color:var(--ac);background:rgba(127,224,160,.08)}
 #info{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:12px;color:var(--mut);font-size:12px;pointer-events:none}
 </style>
@@ -39,7 +40,7 @@ button.on{border-color:var(--ac);color:var(--ac);background:rgba(127,224,160,.08
 <body>
 <div id="info"></div>
 <div id="hint"><span id="h1"><svg viewBox="0 0 16 16"><path d="M1 8h14M4 5 1 8l3 3M12 5l3 3-3 3"/></svg>Ziehen · Drehen</span><span id="h2"><svg viewBox="0 0 16 16"><rect x="4.5" y="1.5" width="7" height="13" rx="3.5"/><path d="M8 4.5v3"/></svg>Scrollen · Zoomen</span></div>
-<div id="ui"><div class="cols" id="cols"></div><button id="strings">Strings</button></div>
+<div id="ui"><div class="cols" id="cols"></div><div id="bt"><button id="strings">Strings</button><button id="mirror" class="on">Spiegelung</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
@@ -138,6 +139,7 @@ const touch=()=>{last=performance.now();};
 ctl.addEventListener('start',touch);ctl.addEventListener('end',touch);
 const $=id=>document.getElementById(id);
 $('strings').onclick=e=>{lines.visible=!lines.visible;e.target.classList.toggle('on',lines.visible);touch();};
+$('mirror').onclick=e=>{const on=!e.target.classList.contains('on');e.target.classList.toggle('on',on);scene.traverse(o=>{if(o.renderOrder>=1)o.visible=on;});touch();};
 // Drehregler: Temperatur (±90°, Farbe) · Auswahl (360°, 3 Rasterpunkte = Animation) · Handbrause (±90°, Kreisgröße)
 const OPTS=['Whirl','Sparkling Rain','Massage'];
 const KN=[{name:'Temperatur',type:'arc',v:.5,e:['#e04040','#4a80ff']},
