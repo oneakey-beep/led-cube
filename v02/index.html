@@ -71,6 +71,7 @@ function updBlk(){blk.visible=!imgOn;}
 const vs=`
 uniform float uTime,uSize,uScale,uSign,uArea,uFade,uRingR,uRingA,uH,uHR,uBase;uniform vec4 uW;varying vec3 vCol;
 vec3 col(float k){return vec3(1.);}
+float sq(float x){return x*x;}
 float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
 float surf(vec2 q,float t){q+=.35*vec2(sin(q.y*1.7+t*.6),cos(q.x*1.5-t*.5));return .5*sin(q.x*.9+t*.35)+.55*sin(q.x*1.6+t*.8)+.4*sin(q.y*2.1-t*.65+q.x*.7)+.3*sin((q.x+q.y)*2.7+t*1.1)+.2*sin(q.x*4.1-q.y*3.3-t*1.5);}
 void main(){
@@ -89,7 +90,7 @@ void main(){
    float ons=step(.47,h(p.xz*4.3+float(n)*8.1));float f=fract(t*sp+r);float hd=1.35-1.65*f;float d=p.y/${fH}-hd;
    if(d>=0.)v+=exp(-d*14.)*(d<.02?1.4:1.)*ons;
    float u=(f-.818)/.182;
-   if(u>0.){float h2=h(p.xz*5.1+float(n)*3.3);float yb=(.15+.25*h2)*4.*u*(1.-u);v+=(exp(-u*6.)*step(p.y,.09)*1.5+exp(-pow((p.y-yb)/.04,2.))*(1.-u)*.9)*ons;}}
+   if(u>0.){float h2=h(p.xz*5.1+float(n)*3.3);float yb=(.15+.25*h2)*4.*u*(1.-u);v+=(exp(-u*6.)*step(p.y,.09)*1.5+exp(-sq((p.y-yb)/.04))*(1.-u)*.9)*ons;}}
   v*=uW.z*cm*step(edge,p.y);vs+=v;cs+=col(.4)*v;}
  {float y1=p.y/${fH};float xc=.14*sin(y1*5.-t*.9)+.05*sin(y1*13.+t*1.7);
   float inS=smoothstep(.12,.05,abs(p.x-xc))*step(abs(p.z),.08);
@@ -106,7 +107,7 @@ void main(){
   float dr=floor(mod(t*rate+r*16.,16.))-(${fN}-ri);
   float v=dr<-.5?0.:(dr<.5?1.:(dr<1.5?.55:(dr<2.5?.25:(dr<3.5?.1:0.))));
   v*=prof*(.5+.5*ri/${fN})*uH;vs+=v;cs+=col(.55+.4*prof)*v;}
- {float rr=length(vec2(P0.x,p.y-${fH}*.5));float v=0.;for(int k=0;k<3;k++){float rc=uRingR-float(k)*.24;v+=.4*pow(.8,float(k))*exp(-pow((rr-rc)/.06,2.))*step(-.05,rc);}v*=uRingA*(1.-.9*clamp((${fD}-P0.z)/${BD.toFixed(3)},0.,1.));vs+=v;cs+=col(.9)*v;}
+ {float rr=length(vec2(P0.x,p.y-${fH}*.5));float v=0.;for(int k=0;k<3;k++){float rc=uRingR-float(k)*.24;v+=.4*(k==0?1.:(k==1?.8:.64))*exp(-sq((rr-rc)/.06))*step(-.05,rc);}v*=uRingA*(1.-.9*clamp((${fD}-P0.z)/${BD.toFixed(3)},0.,1.));vs+=v;cs+=col(.9)*v;}
  vec3 c=mix(col(.3),cs/max(vs,.0001),smoothstep(0.,.02,vs));
  float tk=h(P0.xz*5.3+P0.y*11.7+3.1);float sa=abs(uSign);float xs=uSign<0.?P0.x:-P0.x;float fw=${fW}*.6;float fr=mix(${fW}+fw,-${fW},sa);float tn=step(tk,.2)*smoothstep(fr-fw,fr,xs);
  c=mix(c,uSign<0.?vec3(1.,.1,.08):vec3(.12,.38,1.),tn);
